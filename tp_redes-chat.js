@@ -14,16 +14,14 @@ app.use(cors());
 app.use(express.static('public'));
 
 
-// ----------------------------------------------------------------
-// Caminhos dos arquivos JSON para persistência
-// ----------------------------------------------------------------
+
+// Caminhos dos arquivos json para persistência
 const usersFile = './users.json';
 const roomsFile = './rooms.json';
 const messagesFile = './messages.json';
 
-// ----------------------------------------------------------------
+
 // Função para inicializar um arquivo JSON caso não exista
-// ----------------------------------------------------------------
 function initializeFile(filePath, initialData = []) {
   if (!fs.existsSync(filePath)) {
     fs.writeFileSync(filePath, JSON.stringify(initialData, null, 2), 'utf8');
@@ -48,9 +46,8 @@ if (existingRooms.length === 0) {
   writeJSON(roomsFile, existingRooms);
   console.log("Sala Padrão criada.");
 }
-// ----------------------------------------------------------------
+
 // Funções auxiliares para ler e escrever os arquivos JSON
-// ----------------------------------------------------------------
 function readJSON(filePath) {
   try {
     const data = fs.readFileSync(filePath, 'utf8');
@@ -69,10 +66,8 @@ function writeJSON(filePath, data) {
   }
 }
 
-//================================================================
-// Endpoints de Gerenciamento de Usuários
-//================================================================
 
+// Endpoints de Gerenciamento de Usuários
 /*
   POST /users
   Registrar um novo usuário recebendo o login.
@@ -221,10 +216,8 @@ app.delete('/rooms/:roomId/users/:userId', (req, res) => {
   res.json(room);
 });
 
-//================================================================
-// Endpoints de Mensagens (REST)
-//================================================================
 
+// Endpoints de Mensagens (REST)
 /*
   POST /messages/direct/:receiverId
   Envia uma mensagem direta para outro usuário.
@@ -291,10 +284,8 @@ app.get('/rooms/:roomId/messages', (req, res) => {
   res.json(roomMessages);
 });
 
-//================================================================
-// Configuração do Socket.IO para Chat em Tempo Real
-//================================================================
 
+// Configuração do Socket.IO para Chat em Tempo Real
 // Cria o servidor HTTP, anexando o Express
 const server = http.createServer(app);
 // Configura o Socket.IO com CORS liberado (ajuste conforme necessário)
@@ -380,9 +371,8 @@ io.on("connection", (socket) => {
   });
 });
 
-//================================================================
+
 // Inicialização do Servidor com Socket.IO
-//================================================================
 server.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
