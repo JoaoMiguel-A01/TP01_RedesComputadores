@@ -178,7 +178,6 @@
       <div id="chatMessages"></div>
       <input type="text" id="messageInput" placeholder="Digite sua mensagem e aperte Enter">
       <button id="sendMessageButton">Enviar Mensagem</button>
-      <!-- Removemos o botão "Carregar Histórico" porque as mensagens são atualizadas em tempo real -->
     </div>
     
     <!-- 3. Mensagem Direta (Envio e Caixa de Entrada) -->
@@ -309,7 +308,8 @@
         dmInbox.innerHTML = "";
         if (Array.isArray(messages) && messages.length > 0) {
           messages.forEach(msg => {
-            appendChatMessage(dmInbox, "DM de " + msg.senderId + ": " + msg.conteudo);
+            const sender = msg.senderName || msg.senderId;
+            appendChatMessage(dmInbox, "DM de " + sender + ": " + msg.conteudo);
           });
         } else {
           dmInbox.innerHTML = "<p>Nenhuma mensagem direta.</p>";
@@ -360,7 +360,8 @@
           socket.emit("joinRoom", { roomId: currentRoomId, userId: userId });
         });
         socket.on("newRoomMessage", (msg) => {
-          appendChatMessage(chatMessages, msg.senderId + ": " + msg.conteudo);
+          const sender = msg.senderName || msg.senderId;
+          appendChatMessage(chatMessages, sender + ": " + msg.conteudo);
         });
         socket.on("userJoined", data => {
           appendChatMessage(chatMessages, "Usuário " + data.userId + " entrou na sala " + data.roomId);
@@ -368,9 +369,10 @@
         socket.on("userLeft", data => {
           appendChatMessage(chatMessages, "Usuário " + data.userId + " saiu da sala " + data.roomId);
         });
-        // Ao receber nova DM, atualiza a caixa de entrada
+        // Ao receber nova DM, exibe o senderName se disponível
         socket.on("newDirectMessage", (msg) => {
-          updateDMInbox();
+          const sender = msg.senderName || msg.senderId;
+          appendChatMessage(dmInbox, "DM de " + sender + ": " + msg.conteudo);
         });
         // Atualiza DM Inbox logo no login
         updateDMInbox();
@@ -383,13 +385,11 @@
     // Logout: desconecta o socket e retorna para a tela de login
     logoutButton.addEventListener("click", () => {
       if (socket) socket.disconnect();
-      // Limpa as informações e retorna à tela de login
       userId = null;
       username = "";
       loginContainer.style.display = "block";
       appContainer.style.display = "none";
       usernameInput.value = "";
-      // Opcional: limpar também as áreas de mensagens e listas
       chatMessages.innerHTML = "";
       dmInbox.innerHTML = "";
     });
@@ -527,7 +527,6 @@
           removeUserButton.style.display = "none";
         } else {
           userSearchResult.textContent = JSON.stringify(userData, null, 2);
-          // Mostra o botão para remoção se o usuário pesquisado for diferente do logado
           removeUserButton.style.display = (searchId !== userId) ? "inline-block" : "none";
         }
       } catch (error) {
@@ -537,7 +536,7 @@
       }
     });
     
-    // Remover usuário da sala (utilizando o usuário pesquisado)
+    // Remover usuário da sala (usando o usuário pesquisado)
     removeUserButton.addEventListener("click", async () => {
       const searchId = searchUserId.value.trim();
       if (!searchId) {
@@ -553,7 +552,6 @@
           alert("Erro: " + result.error);
         } else {
           alert("Usuário " + searchId + " removido da sala " + currentRoomId);
-          // Limpa os campos e atualiza a lista de usuários
           searchUserId.value = "";
           userSearchResult.textContent = "";
           removeUserButton.style.display = "none";
@@ -571,7 +569,6 @@
       try {
         const response = await fetch(SERVER_URL + "/rooms");
         const rooms = await response.json();
-        // Procura pela sala atual
         const currentRoom = rooms.find(room => room.id === currentRoomId);
         usersInRoomList.innerHTML = "";
         if (currentRoom && Array.isArray(currentRoom.usuarios) && currentRoom.usuarios.length > 0) {
