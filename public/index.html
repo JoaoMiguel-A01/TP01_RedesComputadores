@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat Completo - Moderno</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
+  <style>
+    /* Reset básico e fonte moderna */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #2d3436, #000);
+      color: #333;
+      padding: 20px;
+    }
+    /* Containers principais */
+    #loginContainer, #appContainer {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 5px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    /* Cabeçalho da aplicação */
+    #appHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    #appHeader h3 { margin: 0; color: #2d3436; }
+    /* Estilo dos títulos */
+    h2, h3, h4 {
+      color: #2d3436;
+      margin-bottom: 15px;
+    }
+    /* Estilo dos inputs e botões */
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus {
+      border-color: #007BFF;
+      outline: none;
+    }
+    button {
+      padding: 12px 20px;
+      border: none;
+      background: #007BFF;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 8px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    /* Abas de navegação */
+    #tabs { margin-bottom: 20px; }
+    .tabButton {
+      padding: 10px 15px;
+      margin-right: 3px;
+      border: none;
+      background: #f1f1f1;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    .tabButton.active, .tabButton:hover {
+      background: #007BFF;
+      color: #fff;
+    }
+    .tabContent {
+      display: none;
+      padding: 15px 0;
+    }
+    /* Área de chat e DM */
+    #chatMessages, #dmInbox {
+      height: 280px;
+      border: 1px solid #eee;
+      padding: 10px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      background: #fafafa;
+      border-radius: 4px;
+    }
+    /* Lista de salas */
+    #roomsList div {
+      margin-bottom: 8px;
+      padding: 10px;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #roomsList div button {
+      margin-left: 5px;
+      padding: 6px 10px;
+      font-size: 0.9em;
+    }
+    /* Seção de Gestão de Usuários */
+    #usersTab input[type="text"] {
+      margin-bottom: 5px;
+    }
+    #userSearchResult, #usersInRoomList {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f1f1f1;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      min-height: 60px;
+    }
+    /* Mensagens de log / chat */
+    #chatMessages p, #dmInbox p {
+      padding: 5px 0;
+      border-bottom: 1px solid #ececec;
+      word-break: break-all;
+    }
+    /* Responsividade */
+    @media (max-width: 600px) {
+      #loginContainer, #appContainer { margin: 10px; }
+      .tabButton { font-size: 0.9em; padding: 8px 12px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Tela de Login -->
+  <div id="loginContainer">
+    <h2>Login no Chat</h2>
+    <input type="text" id="usernameInput" placeholder="Digite seu nome de usuário">
+    <button id="loginButton">Entrar</button>
+  </div>
+
+  <!-- Aplicação Principal (oculta até o login) -->
+  <div id="appContainer" style="display: none;">
+    <!-- Cabeçalho com saudação e botão de logout -->
+    <div id="appHeader">
+      <h3>Bem-vindo, <span id="displayUsername"></span></h3>
+      <button id="logoutButton">Sair do Chat</button>
+    </div>
+    
+    <!-- Abas de Navegação -->
+    <div id="tabs">
+      <button class="tabButton active" data-tab="roomsTab">Salas</button>
+      <button class="tabButton" data-tab="chatTab">Chat</button>
+      <button class="tabButton" data-tab="directTab">DM</button>
+      <button class="tabButton" data-tab="usersTab">Gerenciar Usuários</button>
+      <button class="tabButton" data-tab="userInfoTab">Meu Usuário</button>
+    </div>
+    
+    <!-- Conteúdo das Abas -->
+    <!-- 1. Gerenciamento de Salas -->
+    <div id="roomsTab" class="tabContent" style="display: block;">
+      <h3>Gerenciamento de Salas</h3>
+      <div>
+        <input type="text" id="newRoomName" placeholder="Nome da nova sala">
+        <button id="createRoomButton">Criar Sala</button>
+      </div>
+      <div>
+        <button id="refreshRoomsButton">Atualizar Lista de Salas</button>
+      </div>
+      <div id="roomsList">
+        <!-- As salas serão listadas aqui -->
+      </div>
+    </div>
+    
+    <!-- 2. Chat em Sala -->
+    <div id="chatTab" class="tabContent">
+      <h3>Chat da Sala <span id="currentRoomId"></span></h3>
+      <div id="chatMessages"></div>
+      <input type="text" id="messageInput" placeholder="Digite sua mensagem e aperte Enter">
+      <button id="sendMessageButton">Enviar Mensagem</button>
+      <!-- Removemos o botão "Carregar Histórico" porque as mensagens são atualizadas em tempo real -->
+    </div>
+    
+    <!-- 3. Mensagem Direta (Envio e Caixa de Entrada) -->
+    <div id="directTab" class="tabContent">
+      <h3>Enviar Mensagem Direta</h3>
+      <input type="text" id="dmReceiverId" placeholder="ID do destinatário">
+      <input type="text" id="dmMessageInput" placeholder="Sua mensagem e aperte Enter">
+      <button id="sendDMButton">Enviar DM</button>
+      <h4>Caixa de Entrada DM</h4>
+      <div id="dmInbox">
+        <!-- Mensagens diretas recebidas serão carregadas aqui -->
+      </div>
+      <button id="refreshDMInboxButton">Atualizar DM Inbox</button>
+    </div>
+    
+    <!-- 4. Gerenciar Usuários (Pesquisa e Remoção) -->
+    <div id="usersTab" class="tabContent">
+      <h3>Gerenciar Usuários na Sala</h3>
+      <input type="text" id="searchUserId" placeholder="Digite o ID do usuário para pesquisar">
+      <button id="searchUserButton">Pesquisar Usuário</button>
+      <div id="userSearchResult"></div>
+      <button id="removeUserButton" style="display: none;">Remover deste Chat</button>
+      <hr>
+      <button id="listUsersButton">Listar Usuários da Sala</button>
+      <div id="usersInRoomList"></div>
+    </div>
+    
+    <!-- 5. Informações do Usuário -->
+    <div id="userInfoTab" class="tabContent">
+      <h3>Meu Usuário</h3>
+      <button id="getUserInfoButton">Ver Minhas Informações</button>
+      <pre id="userInfoDisplay"></pre>
+    </div>
+  </div>
+
+  <!-- Biblioteca Socket.IO -->
+  <script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script>
+  <script>
+    const SERVER_URL = "http://192.168.0.15:3000";
+    
+    let socket;
+    let userId = null, username = "";
+    let currentRoomId = "1"; // Sala padrão
+    
+    // Elementos do DOM
+    const loginContainer = document.getElementById("loginContainer");
+    const appContainer = document.getElementById("appContainer");
+    const displayUsername = document.getElementById("displayUsername");
+    const loginButton = document.getElementById("loginButton");
+    const usernameInput = document.getElementById("usernameInput");
+    const logoutButton = document.getElementById("logoutButton");
+    
+    // Abas
+    const tabs = document.querySelectorAll(".tabButton");
+    const tabContents = document.querySelectorAll(".tabContent");
+    
+    // Gerenciamento de Salas
+    const createRoomButton = document.getElementById("createRoomButton");
+    const newRoomName = document.getElementById("newRoomName");
+    const refreshRoomsButton = document.getElementById("refreshRoomsButton");
+    const roomsList = document.getElementById("roomsList");
+    
+    // Chat em Sala
+    const chatMessages = document.getElementById("chatMessages");
+    const messageInput = document.getElementById("messageInput");
+    const sendMessageButton = document.getElementById("sendMessageButton");
+    const currentRoomIdDisplay = document.getElementById("currentRoomId");
+    
+    // DM (Mensagem Direta)
+    const dmReceiverId = document.getElementById("dmReceiverId");
+    const dmMessageInput = document.getElementById("dmMessageInput");
+    const sendDMButton = document.getElementById("sendDMButton");
+    const dmInbox = document.getElementById("dmInbox");
+    const refreshDMInboxButton = document.getElementById("refreshDMInboxButton");
+    
+    // Gerenciar Usuários (Pesquisa e Remoção)
+    const searchUserId = document.getElementById("searchUserId");
+    const searchUserButton = document.getElementById("searchUserButton");
+    const userSearchResult = document.getElementById("userSearchResult");
+    const removeUserButton = document.getElementById("removeUserButton");
+    const listUsersButton = document.getElementById("listUsersButton");
+    const usersInRoomList = document.getElementById("usersInRoomList");
+    
+    // Informações do Usuário
+    const getUserInfoButton = document.getElementById("getUserInfoButton");
+    const userInfoDisplay = document.getElementById("userInfoDisplay");
+    
+    // Função para exibir mensagens em um container (chat ou DM)
+    function appendChatMessage(container, message) {
+      const p = document.createElement("p");
+      p.textContent = message;
+      container.appendChild(p);
+      container.scrollTop = container.scrollHeight;
+    }
+    
+    // Alterna entre abas
+    function switchTab(tabId) {
+      tabContents.forEach(tab => tab.style.display = "none");
+      document.getElementById(tabId).style.display = "block";
+      tabs.forEach(button => button.classList.remove("active"));
+      document.querySelector(`.tabButton[data-tab="${tabId}"]`).classList.add("active");
+    }
+    
+    // Inicializa as abas
+    tabs.forEach(button => {
+      button.addEventListener("click", () => {
+        const targetTab = button.getAttribute("data-tab");
+        switchTab(targetTab);
+      });
+    });
+    
+    // Permitir envio com Enter nos inputs de mensagem
+    [messageInput, dmMessageInput].forEach(input => {
+      input.addEventListener("keypress", function(e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          if (this === messageInput) sendMessageButton.click();
+          if (this === dmMessageInput) sendDMButton.click();
+        }
+      });
+    });
+    
+    // Atualiza a caixa de entrada de DMs (usa GET /messages/direct/{userId})
+    async function updateDMInbox() {
+      try {
+        const response = await fetch(SERVER_URL + "/messages/direct/" + userId);
+        const messages = await response.json();
+        dmInbox.innerHTML = "";
+        if (Array.isArray(messages) && messages.length > 0) {
+          messages.forEach(msg => {
+            appendChatMessage(dmInbox, "DM de " + msg.senderId + ": " + msg.conteudo);
+          });
+        } else {
+          dmInbox.innerHTML = "<p>Nenhuma mensagem direta.</p>";
+        }
+      } catch (error) {
+        console.error("Erro ao atualizar DM Inbox:", error);
+      }
+    }
+    
+    refreshDMInboxButton.addEventListener("click", updateDMInbox);
+    
+    // Login e Registro de Usuário
+    loginButton.addEventListener("click", async () => {
+      username = usernameInput.value.trim();
+      if (!username) {
+        alert("Por favor, digite um nome de usuário.");
+        return;
+      }
+      try {
+        let response = await fetch(SERVER_URL + "/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ login: username })
+        });
+        if (response.status === 400) {
+          response = await fetch(SERVER_URL + "/users/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ login: username })
+          });
+        }
+        const data = await response.json();
+        if (data.error) {
+          alert("Erro: " + data.error);
+          return;
+        }
+        userId = data.id;
+        displayUsername.textContent = username;
+        loginContainer.style.display = "none";
+        appContainer.style.display = "block";
+        
+        // Conecta via Socket.IO
+        socket = io(SERVER_URL);
+        socket.on("connect", () => {
+          appendChatMessage(chatMessages, "Conectado com ID: " + socket.id);
+          currentRoomId = "1";
+          currentRoomIdDisplay.textContent = currentRoomId;
+          socket.emit("joinRoom", { roomId: currentRoomId, userId: userId });
+        });
+        socket.on("newRoomMessage", (msg) => {
+          appendChatMessage(chatMessages, msg.senderId + ": " + msg.conteudo);
+        });
+        socket.on("userJoined", data => {
+          appendChatMessage(chatMessages, "Usuário " + data.userId + " entrou na sala " + data.roomId);
+        });
+        socket.on("userLeft", data => {
+          appendChatMessage(chatMessages, "Usuário " + data.userId + " saiu da sala " + data.roomId);
+        });
+        // Ao receber nova DM, atualiza a caixa de entrada
+        socket.on("newDirectMessage", (msg) => {
+          updateDMInbox();
+        });
+        // Atualiza DM Inbox logo no login
+        updateDMInbox();
+      } catch (error) {
+        console.error("Erro durante o login:", error);
+        alert("Não foi possível efetuar o login.");
+      }
+    });
+    
+    // Logout: desconecta o socket e retorna para a tela de login
+    logoutButton.addEventListener("click", () => {
+      if (socket) socket.disconnect();
+      // Limpa as informações e retorna à tela de login
+      userId = null;
+      username = "";
+      loginContainer.style.display = "block";
+      appContainer.style.display = "none";
+      usernameInput.value = "";
+      // Opcional: limpar também as áreas de mensagens e listas
+      chatMessages.innerHTML = "";
+      dmInbox.innerHTML = "";
+    });
+    
+    // Gerenciamento de Salas: Criar nova sala
+    createRoomButton.addEventListener("click", async () => {
+      const roomName = newRoomName.value.trim();
+      if (!roomName) { alert("Informe o nome da sala."); return; }
+      try {
+        const response = await fetch(SERVER_URL + "/rooms", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nome: roomName })
+        });
+        const resData = await response.json();
+        if (resData.error) alert("Erro: " + resData.error);
+        else {
+          alert("Sala criada: " + resData.nome);
+          newRoomName.value = "";
+          loadRoomsList();
+        }
+      } catch (error) {
+        console.error("Erro ao criar sala:", error);
+        alert("Erro ao criar sala.");
+      }
+    });
+    
+    // Atualiza a lista de salas
+    refreshRoomsButton.addEventListener("click", loadRoomsList);
+    async function loadRoomsList() {
+      try {
+        const response = await fetch(SERVER_URL + "/rooms");
+        const rooms = await response.json();
+        roomsList.innerHTML = "";
+        rooms.forEach(room => {
+          const roomDiv = document.createElement("div");
+          roomDiv.textContent = room.id + " - " + room.nome;
+          
+          const joinButton = document.createElement("button");
+          joinButton.textContent = "Entrar";
+          joinButton.addEventListener("click", async () => {
+            try {
+              const res = await fetch(SERVER_URL + `/rooms/${room.id}/enter`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId: userId })
+              });
+              const resData = await res.json();
+              if (resData.error) alert("Erro: " + resData.error);
+              else {
+                alert("Entrou na sala " + room.nome);
+                currentRoomId = room.id;
+                currentRoomIdDisplay.textContent = currentRoomId;
+                socket.emit("joinRoom", { roomId: currentRoomId, userId: userId });
+                chatMessages.innerHTML = "";
+              }
+            } catch (error) {
+              console.error("Erro ao entrar na sala:", error);
+            }
+          });
+          
+          const removeRoomButton = document.createElement("button");
+          removeRoomButton.textContent = "Remover Sala";
+          removeRoomButton.addEventListener("click", async () => {
+            try {
+              const res = await fetch(SERVER_URL + `/rooms/${room.id}`, { method: "DELETE" });
+              const resData = await res.json();
+              if (resData.error) alert("Erro: " + resData.error);
+              else {
+                alert("Sala removida: " + room.nome);
+                loadRoomsList();
+              }
+            } catch (error) {
+              console.error("Erro ao remover sala:", error);
+            }
+          });
+          roomDiv.appendChild(joinButton);
+          roomDiv.appendChild(removeRoomButton);
+          roomsList.appendChild(roomDiv);
+        });
+      } catch (error) {
+        console.error("Erro ao carregar salas:", error);
+        alert("Erro ao carregar lista de salas.");
+      }
+    }
+    
+    // Envio de Mensagens na Sala (Chat)
+    sendMessageButton.addEventListener("click", () => {
+      const mensagem = messageInput.value.trim();
+      if (!mensagem) return;
+      socket.emit("sendRoomMessage", { roomId: currentRoomId, senderId: userId, mensagem: mensagem });
+      messageInput.value = "";
+    });
+    
+    // Envio de DM
+    sendDMButton.addEventListener("click", async () => {
+      const receiverId = dmReceiverId.value.trim();
+      const dmMsg = dmMessageInput.value.trim();
+      if (!receiverId || !dmMsg) {
+        alert("Informe o ID do destinatário e a mensagem.");
+        return;
+      }
+      try {
+        const response = await fetch(SERVER_URL + `/messages/direct/${receiverId}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ senderId: userId, mensagem: dmMsg })
+        });
+        const result = await response.json();
+        if (result.error) alert("Erro: " + result.error);
+        else {
+          alert("DM enviada para o usuário " + receiverId);
+          dmReceiverId.value = "";
+          dmMessageInput.value = "";
+          updateDMInbox();
+        }
+      } catch (error) {
+        console.error("Erro ao enviar DM:", error);
+        alert("Erro ao enviar mensagem direta.");
+      }
+    });
+    
+    // Pesquisa de usuário por ID
+    searchUserButton.addEventListener("click", async () => {
+      const searchId = searchUserId.value.trim();
+      if (!searchId) {
+        alert("Informe o ID do usuário para pesquisar.");
+        return;
+      }
+      try {
+        const response = await fetch(SERVER_URL + "/users/" + searchId);
+        const userData = await response.json();
+        if (userData.error) {
+          userSearchResult.textContent = "Erro: " + userData.error;
+          removeUserButton.style.display = "none";
+        } else {
+          userSearchResult.textContent = JSON.stringify(userData, null, 2);
+          // Mostra o botão para remoção se o usuário pesquisado for diferente do logado
+          removeUserButton.style.display = (searchId !== userId) ? "inline-block" : "none";
+        }
+      } catch (error) {
+        console.error("Erro ao pesquisar usuário:", error);
+        userSearchResult.textContent = "Erro na pesquisa.";
+        removeUserButton.style.display = "none";
+      }
+    });
+    
+    // Remover usuário da sala (utilizando o usuário pesquisado)
+    removeUserButton.addEventListener("click", async () => {
+      const searchId = searchUserId.value.trim();
+      if (!searchId) {
+        alert("Informe um ID válido para remoção.");
+        return;
+      }
+      try {
+        const response = await fetch(SERVER_URL + `/rooms/${currentRoomId}/users/${searchId}`, {
+          method: "DELETE"
+        });
+        const result = await response.json();
+        if (result.error) {
+          alert("Erro: " + result.error);
+        } else {
+          alert("Usuário " + searchId + " removido da sala " + currentRoomId);
+          // Limpa os campos e atualiza a lista de usuários
+          searchUserId.value = "";
+          userSearchResult.textContent = "";
+          removeUserButton.style.display = "none";
+          listUsers();
+        }
+      } catch (error) {
+        console.error("Erro ao remover usuário:", error);
+        alert("Erro ao remover usuário da sala.");
+      }
+    });
+    
+    // Lista os usuários presentes na sala atual
+    listUsersButton.addEventListener("click", listUsers);
+    async function listUsers() {
+      try {
+        const response = await fetch(SERVER_URL + "/rooms");
+        const rooms = await response.json();
+        // Procura pela sala atual
+        const currentRoom = rooms.find(room => room.id === currentRoomId);
+        usersInRoomList.innerHTML = "";
+        if (currentRoom && Array.isArray(currentRoom.usuarios) && currentRoom.usuarios.length > 0) {
+          currentRoom.usuarios.forEach(uId => {
+            const p = document.createElement("p");
+            p.textContent = "Usuário ID: " + uId;
+            usersInRoomList.appendChild(p);
+          });
+        } else {
+          usersInRoomList.innerHTML = "<p>Nenhum usuário na sala.</p>";
+        }
+      } catch (error) {
+        console.error("Erro ao listar usuários da sala:", error);
+        usersInRoomList.innerHTML = "<p>Erro ao carregar a lista.</p>";
+      }
+    }
+    
+    // Consulta informações do próprio usuário
+    getUserInfoButton.addEventListener("click", async () => {
+      if (!userId) return;
+      try {
+        const response = await fetch(SERVER_URL + `/users/${userId}`);
+        const userInfo = await response.json();
+        if (userInfo.error)
+          userInfoDisplay.textContent = "Erro: " + userInfo.error;
+        else
+          userInfoDisplay.textContent = JSON.stringify(userInfo, null, 2);
+      } catch (error) {
+        console.error("Erro ao obter informações:", error);
+        userInfoDisplay.textContent = "Erro ao carregar informações.";
+      }
+    });
+    
+  </script>
+</body>
+</html>

@@ -1,0 +1,354 @@
+[
+  {
+    "id": "1",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "2",
+    "conteudo": "teste teste teste",
+    "timestamp": "2025-04-14T22:00:05.875Z"
+  },
+  {
+    "id": "2",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "2",
+    "conteudo": "teste teste",
+    "timestamp": "2025-04-14T22:00:11.567Z"
+  },
+  {
+    "id": "3",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "1",
+    "conteudo": "oi",
+    "timestamp": "2025-04-14T22:01:05.365Z"
+  },
+  {
+    "id": "4",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "2",
+    "conteudo": "muito foda",
+    "timestamp": "2025-04-14T22:01:26.300Z"
+  },
+  {
+    "id": "5",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "1",
+    "conteudo": "testeteste",
+    "timestamp": "2025-04-14T22:01:57.619Z"
+  },
+  {
+    "id": "6",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "3",
+    "conteudo": "testestetestetetetetet",
+    "timestamp": "2025-04-14T22:02:01.586Z"
+  },
+  {
+    "id": "7",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "3",
+    "conteudo": "cu",
+    "timestamp": "2025-04-14T22:02:08.364Z"
+  },
+  {
+    "id": "8",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "3",
+    "conteudo": "oi",
+    "timestamp": "2025-04-14T22:05:52.951Z"
+  },
+  {
+    "id": "9",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "2",
+    "conteudo": "testetetetetet",
+    "timestamp": "2025-04-14T22:32:07.568Z"
+  },
+  {
+    "id": "10",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "1",
+    "conteudo": "teste teste teste teste",
+    "timestamp": "2025-04-14T22:32:38.496Z"
+  },
+  {
+    "id": "11",
+    "type": "room",
+    "roomId": "2",
+    "senderId": "1",
+    "conteudo": "Oi",
+    "timestamp": "2025-04-14T22:37:53.428Z"
+  },
+  {
+    "id": "12",
+    "type": "room",
+    "roomId": "2",
+    "senderId": "1",
+    "conteudo": "oi",
+    "timestamp": "2025-04-14T22:37:56.318Z"
+  },
+  {
+    "id": "13",
+    "type": "room",
+    "roomId": "2",
+    "senderId": "1",
+    "conteudo": "oi",
+    "timestamp": "2025-04-14T22:37:57.908Z"
+  },
+  {
+    "id": "14",
+    "type": "room",
+    "roomId": "2",
+    "senderId": "1",
+    "conteudo": "oi",
+    "timestamp": "2025-04-14T22:37:59.246Z"
+  },
+  {
+    "id": "15",
+    "type": "room",
+    "roomId": "2",
+    "senderId": "4",
+    "conteudo": "http://192.168.0.15:3000/",
+    "timestamp": "2025-04-14T22:39:43.643Z"
+  },
+  {
+    "id": "16",
+    "type": "room",
+    "roomId": "2",
+    "senderId": "4",
+    "conteudo": "http://192.168.0.15:3000/",
+    "timestamp": "2025-04-14T22:39:46.957Z"
+  },
+  {
+    "id": "17",
+    "type": "direct",
+    "senderId": "4",
+    "receiverId": "1",
+    "conteudo": "http://192.168.0.15:3000/",
+    "timestamp": "2025-04-14T22:40:07.394Z"
+  },
+  {
+    "id": "18",
+    "type": "direct",
+    "senderId": "4",
+    "receiverId": "1",
+    "conteudo": "para o user 01",
+    "timestamp": "2025-04-14T22:46:28.149Z"
+  },
+  {
+    "id": "19",
+    "type": "direct",
+    "senderId": "4",
+    "receiverId": "1",
+    "conteudo": "dm teste",
+    "timestamp": "2025-04-14T22:51:45.330Z"
+  },
+  {
+    "id": "20",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "1",
+    "conteudo": "sadsdasdasdasdasd",
+    "timestamp": "2025-04-14T22:52:34.457Z"
+  },
+  {
+    "id": "21",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "1",
+    "conteudo": "asdasdasdasdasd",
+    "timestamp": "2025-04-14T22:52:36.413Z"
+  },
+  {
+    "id": "22",
+    "type": "room",
+    "roomId": "3",
+    "senderId": "5",
+    "conteudo": "oi",
+    "timestamp": "2025-04-14T23:00:08.857Z"
+  },
+  {
+    "id": "23",
+    "type": "direct",
+    "senderId": "6",
+    "receiverId": "1",
+    "conteudo": "teste",
+    "timestamp": "2025-04-14T23:04:54.292Z"
+  },
+  {
+    "id": "24",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "teste",
+    "timestamp": "2025-04-14T23:14:51.947Z"
+  },
+  {
+    "id": "25",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "asdasdasd",
+    "timestamp": "2025-04-14T23:14:57.259Z"
+  },
+  {
+    "id": "26",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "asdasdas",
+    "timestamp": "2025-04-14T23:14:58.075Z"
+  },
+  {
+    "id": "27",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "dasdas",
+    "timestamp": "2025-04-14T23:14:58.654Z"
+  },
+  {
+    "id": "28",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "d",
+    "timestamp": "2025-04-14T23:14:58.811Z"
+  },
+  {
+    "id": "29",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "asd",
+    "timestamp": "2025-04-14T23:14:58.977Z"
+  },
+  {
+    "id": "30",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "s",
+    "timestamp": "2025-04-14T23:15:02.183Z"
+  },
+  {
+    "id": "31",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "ds",
+    "timestamp": "2025-04-14T23:15:02.184Z"
+  },
+  {
+    "id": "32",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "d",
+    "timestamp": "2025-04-14T23:15:02.185Z"
+  },
+  {
+    "id": "33",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "sd",
+    "timestamp": "2025-04-14T23:15:02.186Z"
+  },
+  {
+    "id": "34",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "sd",
+    "timestamp": "2025-04-14T23:15:02.187Z"
+  },
+  {
+    "id": "35",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "sd",
+    "timestamp": "2025-04-14T23:15:02.187Z"
+  },
+  {
+    "id": "36",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "sd",
+    "timestamp": "2025-04-14T23:15:02.188Z"
+  },
+  {
+    "id": "37",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "s",
+    "timestamp": "2025-04-14T23:15:02.189Z"
+  },
+  {
+    "id": "38",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "ds",
+    "timestamp": "2025-04-14T23:15:02.190Z"
+  },
+  {
+    "id": "39",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "ds",
+    "timestamp": "2025-04-14T23:15:02.190Z"
+  },
+  {
+    "id": "40",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "ds",
+    "timestamp": "2025-04-14T23:15:02.191Z"
+  },
+  {
+    "id": "41",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "dsasd",
+    "timestamp": "2025-04-14T23:15:02.200Z"
+  },
+  {
+    "id": "42",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "asdadssd",
+    "timestamp": "2025-04-14T23:15:04.765Z"
+  },
+  {
+    "id": "43",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "asdasd",
+    "timestamp": "2025-04-14T23:15:05.934Z"
+  },
+  {
+    "id": "44",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "4",
+    "conteudo": "vdv",
+    "timestamp": "2025-04-14T23:15:06.939Z"
+  }
+]

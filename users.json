@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "login": "userTeste",
+    "criadoEm": "2025-04-14T20:16:32.353Z"
+  },
+  {
+    "id": "2",
+    "login": "joao",
+    "criadoEm": "2025-04-14T20:21:34.141Z"
+  },
+  {
+    "id": "3",
+    "login": "testejoao1",
+    "criadoEm": "2025-04-14T21:45:22.429Z"
+  },
+  {
+    "id": "4",
+    "login": "nykolly",
+    "criadoEm": "2025-04-14T22:39:19.489Z"
+  },
+  {
+    "id": "5",
+    "login": "novouser",
+    "criadoEm": "2025-04-14T22:58:24.459Z"
+  },
+  {
+    "id": "6",
+    "login": "cu",
+    "criadoEm": "2025-04-14T23:04:09.379Z"
+  }
+]
