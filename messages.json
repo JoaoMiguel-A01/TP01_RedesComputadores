@@ -442,5 +442,32 @@
     "senderId": "7",
     "conteudo": "show de boa",
     "timestamp": "2025-04-15T00:23:21.119Z"
+  },
+  {
+    "id": "56",
+    "type": "room",
+    "roomId": "2",
+    "senderId": "7",
+    "senderLogin": "jm",
+    "conteudo": "asdasdasd",
+    "timestamp": "2025-04-15T00:40:21.313Z"
+  },
+  {
+    "id": "57",
+    "type": "room",
+    "roomId": "2",
+    "senderId": "7",
+    "senderLogin": "jm",
+    "conteudo": "asdasdasd",
+    "timestamp": "2025-04-15T00:40:23.408Z"
+  },
+  {
+    "id": "58",
+    "type": "room",
+    "roomId": "2",
+    "senderId": "7",
+    "senderLogin": "jm",
+    "conteudo": "asdasdasd",
+    "timestamp": "2025-04-15T00:40:24.447Z"
   }
 ]

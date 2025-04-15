@@ -289,18 +289,48 @@ app.post('/rooms/:roomId/messages', (req, res) => {
 
 /*
   GET /rooms/:roomId/messages
-  Retorna o histórico de mensagens de uma sala.
+  Recupera o histórico de mensagens da sala de chat.
 */
 app.get('/rooms/:roomId/messages', (req, res) => {
   const { roomId } = req.params;
 
-  // Lê as mensagens do arquivo
+  // Lê as mensagens e os usuários
   const messages = readJSON(messagesFile);
+  const users = readJSON(usersFile);
 
   // Filtra as mensagens da sala específica
-  const roomMessages = messages.filter(msg => msg.type === "room" && msg.roomId === roomId);
+  const roomMessages = messages
+    .filter(msg => msg.type === "room" && msg.roomId === roomId)
+    .map(msg => {
+      const sender = users.find(user => user.id === msg.senderId);
+      return {
+        ...msg,
+        senderLogin: sender ? sender.login : "Desconhecido" // Adiciona o login do remetente
+      };
+    });
 
   res.json(roomMessages);
+});
+
+app.get('/messages/direct/:userId', (req, res) => {
+  const { userId } = req.params;
+
+  // Lê as mensagens e os usuários
+  const messages = readJSON(messagesFile);
+  const users = readJSON(usersFile);
+
+  // Filtra as mensagens diretas enviadas ou recebidas pelo usuário
+  const userMessages = messages
+    .filter(msg => msg.type === "direct" && (msg.senderId === userId || msg.receiverId === userId))
+    .map(msg => {
+      const sender = users.find(user => user.id === msg.senderId);
+      return {
+        ...msg,
+        senderLogin: sender ? sender.login : "Desconhecido" // Adiciona o login do remetente
+      };
+    });
+
+  res.json(userMessages);
 });
 
 // Configuração do Socket.IO para Chat em Tempo Real
@@ -318,10 +348,17 @@ io.on("connection", (socket) => {
 
   // Evento para entrar em uma sala via Socket.IO
   socket.on("joinRoom", ({ roomId, userId }) => {
+    const users = readJSON(usersFile);
+    const user = users.find(u => u.id === userId);
+  
+    if (!user) {
+      socket.emit("error", { error: "Usuário não encontrado." });
+      return;
+    }
+  
     socket.join(roomId);
-    console.log(`Usuário ${userId} entrou na sala ${roomId}`);
-    // Notifica os membros da sala que um novo usuário entrou
-    io.to(roomId).emit("userJoined", { roomId, userId });
+    console.log(`Usuário ${user.login} entrou na sala ${roomId}`);
+    io.to(roomId).emit("userJoined", { roomId, userLogin: user.login });
   });
 
   // Evento para sair da sala
@@ -333,31 +370,35 @@ io.on("connection", (socket) => {
 
   // Evento para enviar mensagem para uma sala
   socket.on("sendRoomMessage", (data) => {
-    // data deve conter: roomId, senderId, mensagem
     const { roomId, senderId, mensagem } = data;
+
     if (!roomId || !senderId || !mensagem) {
       socket.emit("error", { error: "roomId, senderId e mensagem são obrigatórios." });
       return;
     }
-    // Validação simples para existência da sala
-    const rooms = readJSON(roomsFile);
-    const room = rooms.find(r => r.id === roomId);
-    if (!room) {
-      socket.emit("error", { error: "Sala não encontrada." });
+
+    const users = readJSON(usersFile);
+    const sender = users.find(user => user.id === senderId);
+
+    if (!sender) {
+      socket.emit("error", { error: "Usuário remetente não encontrado." });
       return;
     }
+
     const messages = readJSON(messagesFile);
     const newMessage = {
       id: String(messages.length + 1),
       type: "room",
       roomId,
       senderId,
+      senderLogin: sender.login, // Inclui o login do remetente
       conteudo: mensagem,
       timestamp: new Date().toISOString()
     };
+
     messages.push(newMessage);
     writeJSON(messagesFile, messages);
-    // Emite a nova mensagem para todos na sala
+
     io.to(roomId).emit("newRoomMessage", newMessage);
   });
 
@@ -365,13 +406,11 @@ io.on("connection", (socket) => {
   socket.on("sendDirectMessage", (data) => {
     const { receiverId, senderId, mensagem } = data;
 
-    // Validação dos dados recebidos
     if (!receiverId || !senderId || !mensagem) {
       socket.emit("error", { error: "receiverId, senderId e mensagem são obrigatórios." });
       return;
     }
 
-    // Lê os usuários e valida se o remetente e o destinatário existem
     const users = readJSON(usersFile);
     const sender = users.find(user => user.id === senderId);
     const receiver = users.find(user => user.id === receiverId);
@@ -386,7 +425,6 @@ io.on("connection", (socket) => {
       return;
     }
 
-    // Cria a nova mensagem
     const messages = readJSON(messagesFile);
     const newMessage = {
       id: String(messages.length + 1),
@@ -398,11 +436,9 @@ io.on("connection", (socket) => {
       timestamp: new Date().toISOString()
     };
 
-    // Salva a mensagem no arquivo
     messages.push(newMessage);
     writeJSON(messagesFile, messages);
 
-    // Envia a mensagem apenas para o destinatário, se ele estiver conectado
     const receiverSocket = Array.from(io.sockets.sockets.values()).find(
       socket => socket.userId === receiverId
     );
@@ -413,7 +449,6 @@ io.on("connection", (socket) => {
       console.log(`Usuário ${receiverId} não está conectado no momento.`);
     }
 
-    // Opcional: Notifica o remetente que a mensagem foi enviada
     socket.emit("directMessageSent", newMessage);
   });
 

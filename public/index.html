@@ -362,11 +362,10 @@
           socket.emit("joinRoom", { roomId: currentRoomId, userId: userId });
         });
         socket.on("newRoomMessage", (msg) => {
-          const sender = msg.senderName || msg.senderId;
-          appendChatMessage(chatMessages, sender + ": " + msg.conteudo);
+          appendChatMessage(chatMessages, `${msg.senderLogin}: ${msg.conteudo}`);
         });
         socket.on("userJoined", data => {
-          appendChatMessage(chatMessages, "Usuário " + data.userId + " entrou na sala " + data.roomId);
+          appendChatMessage(chatMessages, `Usuário ${data.userLogin} entrou na sala ${data.roomId}`);
         });
         socket.on("userLeft", data => {
           appendChatMessage(chatMessages, "Usuário " + data.userId + " saiu da sala " + data.roomId);
@@ -613,7 +612,7 @@
         if (Array.isArray(messages) && messages.length > 0) {
           chatMessages.innerHTML = ""; // Limpa as mensagens atuais
           messages.forEach(msg => {
-            appendChatMessage(chatMessages, `${msg.senderLogin || msg.senderId}: ${msg.conteudo}`);
+            appendChatMessage(chatMessages, `${msg.senderLogin}: ${msg.conteudo}`);
           });
         } else {
           chatMessages.innerHTML = "<p>Não há mensagens antigas nesta sala.</p>";
