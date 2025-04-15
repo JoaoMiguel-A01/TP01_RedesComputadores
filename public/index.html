@@ -229,8 +229,19 @@
   <!-- Biblioteca Socket.IO -->
   <script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script>
   <script>
-    const SERVER_URL = "http://192.168.100.17:3000";
-    
+    let SERVER_URL = "";
+
+    // Busca o IP e a porta do servidor automaticamente
+    fetch('/server-info')
+      .then(response => response.json())
+      .then(data => {
+        SERVER_URL = `http://${data.ip}:${data.port}`;
+        console.log("Conectando ao servidor em:", SERVER_URL);
+      })
+      .catch(err => {
+        console.error("Erro ao obter informações do servidor:", err);
+      });
+
     let socket;
     let userId = null, username = "";
     let currentRoomId = "1"; // Sala padrão

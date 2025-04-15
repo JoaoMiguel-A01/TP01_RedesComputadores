@@ -4,9 +4,10 @@ const bodyParser = require('body-parser');
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
+const os = require('os'); // Para obter o IP local
+const portfinder = require('portfinder'); // Para encontrar uma porta disponível
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Configuração do middleware
 app.use(bodyParser.json());
@@ -333,131 +334,54 @@ app.get('/messages/direct/:userId', (req, res) => {
   res.json(userMessages);
 });
 
-// Configuração do Socket.IO para Chat em Tempo Real
-// Cria o servidor HTTP, anexando o Express
-const server = http.createServer(app);
-// Configura o Socket.IO com CORS liberado (ajuste conforme necessário)
-const io = socketIo(server, {
-  cors: {
-    origin: "*"
+// Função para obter o IP local
+function getLocalIPAddress() {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name]) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        return iface.address;
+      }
+    }
   }
-});
+  return '127.0.0.1'; // Fallback para localhost
+}
 
-io.on("connection", (socket) => {
-  console.log("Novo cliente conectado: ", socket.id);
+// Configuração dinâmica de porta e IP
+const localIP = getLocalIPAddress();
+portfinder.getPortPromise()
+  .then(port => {
+    const server = http.createServer(app);
+    const io = socketIo(server, {
+      cors: {
+        origin: "*"
+      }
+    });
 
-  // Evento para entrar em uma sala via Socket.IO
-  socket.on("joinRoom", ({ roomId, userId }) => {
-    const users = readJSON(usersFile);
-    const user = users.find(u => u.id === userId);
-  
-    if (!user) {
-      socket.emit("error", { error: "Usuário não encontrado." });
-      return;
-    }
-  
-    socket.join(roomId);
-    console.log(`Usuário ${user.login} entrou na sala ${roomId}`);
-    io.to(roomId).emit("userJoined", { roomId, userLogin: user.login });
+    // Configuração do Socket.IO
+    io.on("connection", (socket) => {
+      console.log("Novo cliente conectado: ", socket.id);
+
+      socket.on("joinRoom", ({ roomId, userId }) => {
+        socket.join(roomId);
+        console.log(`Usuário ${userId} entrou na sala ${roomId}`);
+        io.to(roomId).emit("userJoined", { roomId, userId });
+      });
+
+      socket.on("disconnect", () => {
+        console.log("Cliente desconectado: " + socket.id);
+      });
+    });
+
+    app.get('/server-info', (req, res) => {
+      res.json({ ip: localIP, port });
+    });
+
+    // Inicialização do servidor
+    server.listen(port, localIP, () => {
+      console.log(`Servidor rodando em http://${localIP}:${port}`);
+    });
+  })
+  .catch(err => {
+    console.error("Erro ao encontrar uma porta disponível:", err);
   });
-
-  // Evento para sair da sala
-  socket.on("leaveRoom", ({ roomId, userId }) => {
-    socket.leave(roomId);
-    console.log(`Usuário ${userId} saiu da sala ${roomId}`);
-    io.to(roomId).emit("userLeft", { roomId, userId });
-  });
-
-  // Evento para enviar mensagem para uma sala
-  socket.on("sendRoomMessage", (data) => {
-    const { roomId, senderId, mensagem } = data;
-
-    if (!roomId || !senderId || !mensagem) {
-      socket.emit("error", { error: "roomId, senderId e mensagem são obrigatórios." });
-      return;
-    }
-
-    const users = readJSON(usersFile);
-    const sender = users.find(user => user.id === senderId);
-
-    if (!sender) {
-      socket.emit("error", { error: "Usuário remetente não encontrado." });
-      return;
-    }
-
-    const messages = readJSON(messagesFile);
-    const newMessage = {
-      id: String(messages.length + 1),
-      type: "room",
-      roomId,
-      senderId,
-      senderLogin: sender.login, // Inclui o login do remetente
-      conteudo: mensagem,
-      timestamp: new Date().toISOString()
-    };
-
-    messages.push(newMessage);
-    writeJSON(messagesFile, messages);
-
-    io.to(roomId).emit("newRoomMessage", newMessage);
-  });
-
-  // Evento para enviar mensagem direta
-  socket.on("sendDirectMessage", (data) => {
-    const { receiverId, senderId, mensagem } = data;
-
-    if (!receiverId || !senderId || !mensagem) {
-      socket.emit("error", { error: "receiverId, senderId e mensagem são obrigatórios." });
-      return;
-    }
-
-    const users = readJSON(usersFile);
-    const sender = users.find(user => user.id === senderId);
-    const receiver = users.find(user => user.id === receiverId);
-
-    if (!sender) {
-      socket.emit("error", { error: "Usuário remetente não encontrado." });
-      return;
-    }
-
-    if (!receiver) {
-      socket.emit("error", { error: "Usuário destinatário não encontrado." });
-      return;
-    }
-
-    const messages = readJSON(messagesFile);
-    const newMessage = {
-      id: String(messages.length + 1),
-      type: "direct",
-      senderId,
-      senderLogin: sender.login, // Inclui o login do remetente
-      receiverId,
-      conteudo: mensagem,
-      timestamp: new Date().toISOString()
-    };
-
-    messages.push(newMessage);
-    writeJSON(messagesFile, messages);
-
-    const receiverSocket = Array.from(io.sockets.sockets.values()).find(
-      socket => socket.userId === receiverId
-    );
-
-    if (receiverSocket) {
-      receiverSocket.emit("newDirectMessage", newMessage);
-    } else {
-      console.log(`Usuário ${receiverId} não está conectado no momento.`);
-    }
-
-    socket.emit("directMessageSent", newMessage);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("Cliente desconectado: " + socket.id);
-  });
-});
-
-// Inicialização do Servidor com Socket.IO
-server.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
