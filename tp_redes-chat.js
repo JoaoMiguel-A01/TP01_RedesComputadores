@@ -368,6 +368,67 @@ portfinder.getPortPromise()
         io.to(roomId).emit("userJoined", { roomId, userId });
       });
 
+      // Enviar mensagem para uma sala
+      socket.on("sendRoomMessage", ({ roomId, senderId, mensagem }) => {
+        const rooms = readJSON(roomsFile);
+        const room = rooms.find(r => r.id === roomId);
+        if (!room) {
+          console.error("Sala não encontrada:", roomId);
+          return;
+        }
+
+        const users = readJSON(usersFile);
+        const sender = users.find(user => user.id === senderId);
+        if (!sender) {
+          console.error("Usuário remetente não encontrado:", senderId);
+          return;
+        }
+
+        const messages = readJSON(messagesFile);
+        const newMessage = {
+          id: String(messages.length + 1),
+          type: "room",
+          roomId,
+          senderId,
+          senderLogin: sender.login, // Inclui o login do remetente
+          conteudo: mensagem,
+          timestamp: new Date().toISOString()
+        };
+
+        messages.push(newMessage);
+        writeJSON(messagesFile, messages);
+
+        io.to(roomId).emit("newRoomMessage", newMessage); // Emite a mensagem com o login do remetente
+      });
+
+      // Enviar mensagem direta
+      socket.on("newDirectMessage", ({ senderId, receiverId, mensagem }) => {
+        const users = readJSON(usersFile);
+        const sender = users.find(user => user.id === senderId);
+        const receiver = users.find(user => user.id === receiverId);
+
+        if (!sender || !receiver) {
+          console.error("Usuário remetente ou destinatário não encontrado.");
+          return;
+        }
+
+        const messages = readJSON(messagesFile);
+        const newMessage = {
+          id: String(messages.length + 1),
+          type: "direct",
+          senderId,
+          senderLogin: sender.login, // Inclui o login do remetente
+          receiverId,
+          conteudo: mensagem,
+          timestamp: new Date().toISOString()
+        };
+
+        messages.push(newMessage);
+        writeJSON(messagesFile, messages);
+
+        io.to(receiverId).emit("newDirectMessage", newMessage); // Emite a mensagem com o login do remetente
+      });
+
       socket.on("disconnect", () => {
         console.log("Cliente desconectado: " + socket.id);
       });
