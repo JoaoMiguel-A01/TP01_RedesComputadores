@@ -418,5 +418,29 @@
     "receiverId": "2",
     "conteudo": "recebi novamente",
     "timestamp": "2025-04-15T00:08:44.106Z"
+  },
+  {
+    "id": "53",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "7",
+    "conteudo": "jogos de corrida",
+    "timestamp": "2025-04-15T00:23:16.508Z"
+  },
+  {
+    "id": "54",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "7",
+    "conteudo": "top",
+    "timestamp": "2025-04-15T00:23:17.297Z"
+  },
+  {
+    "id": "55",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "7",
+    "conteudo": "show de boa",
+    "timestamp": "2025-04-15T00:23:21.119Z"
   }
 ]

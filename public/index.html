@@ -9,7 +9,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Roboto', sans-serif;
-      background: linear-gradient(135deg, #2d3436, #000);
+      background: linear-gradient(135deg, #252727, #000);
       color: #333;
       padding: 20px;
     }
@@ -175,6 +175,7 @@
     <!-- 2. Chat em Sala -->
     <div id="chatTab" class="tabContent">
       <h3>Chat da Sala <span id="currentRoomId"></span></h3>
+      <button id="loadChatHistoryButton">Carregar Histórico</button> <!-- Botão para carregar histórico -->
       <div id="chatMessages"></div>
       <input type="text" id="messageInput" placeholder="Digite sua mensagem e aperte Enter">
       <button id="sendMessageButton">Enviar Mensagem</button>
@@ -245,7 +246,8 @@
     const messageInput = document.getElementById("messageInput");
     const sendMessageButton = document.getElementById("sendMessageButton");
     const currentRoomIdDisplay = document.getElementById("currentRoomId");
-    
+    const loadChatHistoryButton = document.getElementById("loadChatHistoryButton");
+
     // DM (Mensagem Direta)
     const dmReceiverId = document.getElementById("dmReceiverId");
     const dmMessageInput = document.getElementById("dmMessageInput");
@@ -599,6 +601,26 @@
       } catch (error) {
         console.error("Erro ao obter informações:", error);
         userInfoDisplay.textContent = "Erro ao carregar informações.";
+      }
+    });
+
+    // Função para carregar o histórico de mensagens da sala
+    loadChatHistoryButton.addEventListener("click", async () => {
+      try {
+        const response = await fetch(SERVER_URL + `/rooms/${currentRoomId}/messages`);
+        const messages = await response.json();
+
+        if (Array.isArray(messages) && messages.length > 0) {
+          chatMessages.innerHTML = ""; // Limpa as mensagens atuais
+          messages.forEach(msg => {
+            appendChatMessage(chatMessages, `${msg.senderLogin || msg.senderId}: ${msg.conteudo}`);
+          });
+        } else {
+          chatMessages.innerHTML = "<p>Não há mensagens antigas nesta sala.</p>";
+        }
+      } catch (error) {
+        console.error("Erro ao carregar histórico de mensagens:", error);
+        alert("Erro ao carregar histórico de mensagens.");
       }
     });
     

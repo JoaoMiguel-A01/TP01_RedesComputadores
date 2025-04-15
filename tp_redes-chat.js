@@ -289,12 +289,17 @@ app.post('/rooms/:roomId/messages', (req, res) => {
 
 /*
   GET /rooms/:roomId/messages
-  Recupera o histórico de mensagens da sala de chat.
+  Retorna o histórico de mensagens de uma sala.
 */
 app.get('/rooms/:roomId/messages', (req, res) => {
   const { roomId } = req.params;
+
+  // Lê as mensagens do arquivo
   const messages = readJSON(messagesFile);
-  const roomMessages = messages.filter(message => message.roomId === roomId);
+
+  // Filtra as mensagens da sala específica
+  const roomMessages = messages.filter(msg => msg.type === "room" && msg.roomId === roomId);
+
   res.json(roomMessages);
 });
 
