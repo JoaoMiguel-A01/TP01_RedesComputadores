@@ -9,8 +9,8 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Roboto', sans-serif;
-      background: linear-gradient(135deg, #252727, #000);
-      color: #333;
+      background: linear-gradient(135deg, #1e1e2f, #2a2a40);
+      color: #f5f5f5;
       padding: 20px;
     }
     /* Containers principais */
@@ -18,9 +18,9 @@
       max-width: 900px;
       margin: 30px auto;
       padding: 20px;
-      background: #fff;
-      border-radius: 5px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      background: #2e2e3e;
+      border-radius: 10px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     }
     /* Cabeçalho da aplicação */
     #appHeader {
@@ -29,10 +29,10 @@
       align-items: center;
       margin-bottom: 15px;
     }
-    #appHeader h3 { margin: 0; color: #2d3436; }
+    #appHeader h3 { margin: 0; color: #ffffff; }
     /* Estilo dos títulos */
     h2, h3, h4 {
-      color: #2d3436;
+      color: #ffffff;
       margin-bottom: 15px;
     }
     /* Estilo dos inputs e botões */
@@ -40,26 +40,30 @@
       width: 100%;
       padding: 12px;
       margin: 8px 0;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      transition: border-color 0.2s;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background: #3a3a4a;
+      color: #ffffff;
+      transition: border-color 0.2s, background 0.2s;
     }
     input[type="text"]:focus {
-      border-color: #007BFF;
+      border-color: #6c63ff;
+      background: #4a4a5a;
       outline: none;
     }
     button {
       padding: 12px 20px;
       border: none;
-      background: #007BFF;
-      color: #fff;
-      border-radius: 4px;
+      background: #6c63ff;
+      color: #ffffff;
+      border-radius: 6px;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.2s, transform 0.1s;
       margin-top: 8px;
     }
     button:hover {
-      background: #0056b3;
+      background: #5a54d6;
+      transform: scale(1.02);
     }
     /* Abas de navegação */
     #tabs { margin-bottom: 20px; }
@@ -67,14 +71,15 @@
       padding: 10px 15px;
       margin-right: 3px;
       border: none;
-      background: #f1f1f1;
+      background: #3a3a4a;
+      color: #ffffff;
       cursor: pointer;
-      border-radius: 4px;
-      transition: background 0.2s;
+      border-radius: 6px;
+      transition: background 0.2s, color 0.2s;
     }
     .tabButton.active, .tabButton:hover {
-      background: #007BFF;
-      color: #fff;
+      background: #6c63ff;
+      color: #ffffff;
     }
     .tabContent {
       display: none;
@@ -83,28 +88,33 @@
     /* Área de chat e DM */
     #chatMessages, #dmInbox {
       height: 280px;
-      border: 1px solid #eee;
+      border: 1px solid #444;
       padding: 10px;
       overflow-y: auto;
       margin-bottom: 10px;
-      background: #fafafa;
-      border-radius: 4px;
+      background: #3a3a4a;
+      border-radius: 6px;
+      color: #ffffff;
     }
     /* Lista de salas */
     #roomsList div {
       margin-bottom: 8px;
       padding: 10px;
-      background: #f9f9f9;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      background: #3a3a4a;
+      border: 1px solid #444;
+      border-radius: 6px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      color: #ffffff;
     }
     #roomsList div button {
       margin-left: 5px;
       padding: 6px 10px;
       font-size: 0.9em;
+      background: #6c63ff;
+      color: #ffffff;
+      border-radius: 6px;
     }
     /* Seção de Gestão de Usuários */
     #usersTab input[type="text"] {
@@ -113,16 +123,18 @@
     #userSearchResult, #usersInRoomList {
       margin-top: 10px;
       padding: 10px;
-      background: #f1f1f1;
-      border-radius: 4px;
-      border: 1px solid #ccc;
+      background: #3a3a4a;
+      border-radius: 6px;
+      border: 1px solid #444;
       min-height: 60px;
+      color: #ffffff;
     }
     /* Mensagens de log / chat */
     #chatMessages p, #dmInbox p {
       padding: 5px 0;
-      border-bottom: 1px solid #ececec;
+      border-bottom: 1px solid #555;
       word-break: break-all;
+      color: #ffffff;
     }
     /* Responsividade */
     @media (max-width: 600px) {
@@ -217,7 +229,7 @@
   <!-- Biblioteca Socket.IO -->
   <script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script>
   <script>
-    const SERVER_URL = "http://192.168.0.15:3000";
+    const SERVER_URL = "http://192.168.100.17:3000";
     
     let socket;
     let userId = null, username = "";
