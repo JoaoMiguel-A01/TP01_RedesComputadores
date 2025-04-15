@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static('public'));
 
-// Caminhos dos arquivos json para persistência
+// Caminhos dos arquivos json
 const usersFile = './users.json';
 const roomsFile = './rooms.json';
 const messagesFile = './messages.json';
@@ -31,7 +31,7 @@ initializeFile(usersFile);
 initializeFile(roomsFile);
 initializeFile(messagesFile);
 
-// Verifica se existem salas registradas; se não, cria a sala padrão.
+// Verifica se existem salas registradas; se não, cria a sala padrão
 let existingRooms = readJSON(roomsFile);
 if (existingRooms.length === 0) {
   const defaultRoom = {
@@ -67,8 +67,8 @@ function writeJSON(filePath, data) {
 // Endpoints de Gerenciamento de Usuários
 /*
   POST /users
-  Registrar um novo usuário recebendo o login.
-  Verifica se o mesmo já existe no arquivo.
+  Registrar um novo usuário recebendo o login
+  Verifica se o mesmo já existe no arquivo
 */
 app.post('/users', (req, res) => {
   const { login } = req.body;
@@ -92,7 +92,7 @@ app.post('/users', (req, res) => {
 
 /*
   POST /users/login
-  Autentica um usuário pelo login (sem credenciais adicionais).
+  Autentica um usuário pelo login (sem credenciais adicionais)
 */
 app.post('/users/login', (req, res) => {
   const { login } = req.body;
@@ -108,7 +108,7 @@ app.post('/users/login', (req, res) => {
 
 /*
   GET /users/:userId
-  Retorna as informações de um usuário específico.
+  Retorna as informações de um usuário específico
 */
 app.get('/users/:userId', (req, res) => {
   const { userId } = req.params;
@@ -125,7 +125,7 @@ app.get('/rooms', (req, res) => {
 
 /*
   POST /rooms
-  Cria uma nova sala de chat.
+  Cria uma nova sala de chat
 */
 app.post('/rooms', (req, res) => {
   const { nome } = req.body;
@@ -146,7 +146,7 @@ app.post('/rooms', (req, res) => {
 
 /*
   DELETE /rooms/:roomId
-  Remove uma sala de chat.
+  Remove uma sala de chat
 */
 app.delete('/rooms/:roomId', (req, res) => {
   const { roomId } = req.params;
@@ -161,7 +161,7 @@ app.delete('/rooms/:roomId', (req, res) => {
 
 /*
   POST /rooms/:roomId/enter
-  Permite que um usuário entre na sala de chat.
+  Permite que um usuário entre na sala de chat
 */
 app.post('/rooms/:roomId/enter', (req, res) => {
   const { roomId } = req.params;
@@ -182,7 +182,7 @@ app.post('/rooms/:roomId/enter', (req, res) => {
 
 /*
   POST /rooms/:roomId/leave
-  Permite que um usuário saia da sala de chat.
+  Permite que um usuário saia da sala de chat
 */
 app.post('/rooms/:roomId/leave', (req, res) => {
   const { roomId } = req.params;
@@ -200,7 +200,7 @@ app.post('/rooms/:roomId/leave', (req, res) => {
 
 /*
   DELETE /rooms/:roomId/users/:userId
-  Remove um usuário de uma sala específica (operação administrativa).
+  Remove um usuário de uma sala específica
 */
 app.delete('/rooms/:roomId/users/:userId', (req, res) => {
   const { roomId, userId } = req.params;
@@ -216,7 +216,7 @@ app.delete('/rooms/:roomId/users/:userId', (req, res) => {
 // Endpoints de Mensagens (REST)
 /*
   POST /messages/direct/:receiverId
-  Envia uma mensagem direta para outro usuário.
+  Envia uma mensagem direta para outro usuário
 */
 app.post('/messages/direct/:receiverId', (req, res) => {
   const { receiverId } = req.params;
@@ -260,7 +260,7 @@ app.post('/messages/direct/:receiverId', (req, res) => {
 
 /*
   POST /rooms/:roomId/messages
-  Envia uma mensagem para uma sala de chat.
+  Envia uma mensagem para uma sala de chat
 */
 app.post('/rooms/:roomId/messages', (req, res) => {
   const { roomId } = req.params;
@@ -269,7 +269,7 @@ app.post('/rooms/:roomId/messages', (req, res) => {
     return res.status(400).json({ error: 'senderId e mensagem são obrigatórios.' });
   }
   
-  // Opcional: Validar se o usuário faz parte da sala.
+  // Valida se o usuário faz parte da sala
   const rooms = readJSON(roomsFile);
   const room = rooms.find(r => r.id === roomId);
   if (!room) return res.status(404).json({ error: 'Sala não encontrada.' });
@@ -290,7 +290,7 @@ app.post('/rooms/:roomId/messages', (req, res) => {
 
 /*
   GET /rooms/:roomId/messages
-  Recupera o histórico de mensagens da sala de chat.
+  Recupera o histórico de mensagens da sala de chat
 */
 app.get('/rooms/:roomId/messages', (req, res) => {
   const { roomId } = req.params;

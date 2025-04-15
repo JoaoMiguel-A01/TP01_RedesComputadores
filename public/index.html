@@ -5,7 +5,6 @@
   <title>Chat Completo</title>
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
   <style>
-    /* Reset básico e fonte moderna */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Roboto', sans-serif;
@@ -22,7 +21,7 @@
       border-radius: 10px;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     }
-    /* Cabeçalho da aplicação */
+    /* Cabeçalho */
     #appHeader {
       display: flex;
       justify-content: space-between;
@@ -30,12 +29,12 @@
       margin-bottom: 15px;
     }
     #appHeader h3 { margin: 0; color: #ffffff; }
-    /* Estilo dos títulos */
+    /* Títulos */
     h2, h3, h4 {
       color: #ffffff;
       margin-bottom: 15px;
     }
-    /* Estilo dos inputs e botões */
+    /* Inputs e botões */
     input[type="text"] {
       width: 100%;
       padding: 12px;
@@ -116,7 +115,7 @@
       color: #ffffff;
       border-radius: 6px;
     }
-    /* Seção de Gestão de Usuários */
+    /* Aba de Gestão de Usuários */
     #usersTab input[type="text"] {
       margin-bottom: 5px;
     }
@@ -153,7 +152,7 @@
 
   <!-- Aplicação Principal (oculta até o login) -->
   <div id="appContainer" style="display: none;">
-    <!-- Cabeçalho com saudação e botão de logout -->
+    <!-- Cabeçalho com botão de saida -->
     <div id="appHeader">
       <h3>Bem-vindo, <span id="displayUsername"></span></h3>
       <button id="logoutButton">Sair do Chat</button>
@@ -180,7 +179,7 @@
         <button id="refreshRoomsButton">Atualizar Lista de Salas</button>
       </div>
       <div id="roomsList">
-        <!-- As salas serão listadas aqui -->
+        <!-- Lista de salas -->
       </div>
     </div>
     
@@ -201,12 +200,12 @@
       <button id="sendDMButton">Enviar DM</button>
       <h4>Caixa de Entrada DM</h4>
       <div id="dmInbox">
-        <!-- Mensagens diretas recebidas serão carregadas aqui -->
+        <!-- Mensagens diretas  -->
       </div>
       <button id="refreshDMInboxButton">Atualizar DM Inbox</button>
     </div>
     
-    <!-- 4. Gerenciar Usuários (Pesquisa e Remoção) -->
+    <!-- 4. Gerenciar Usuários -->
     <div id="usersTab" class="tabContent">
       <h3>Gerenciar Usuários na Sala</h3>
       <input type="text" id="searchUserId" placeholder="Digite o ID do usuário para pesquisar">
@@ -271,14 +270,14 @@
     const currentRoomIdDisplay = document.getElementById("currentRoomId");
     const loadChatHistoryButton = document.getElementById("loadChatHistoryButton");
 
-    // DM (Mensagem Direta)
+    // DM
     const dmReceiverId = document.getElementById("dmReceiverId");
     const dmMessageInput = document.getElementById("dmMessageInput");
     const sendDMButton = document.getElementById("sendDMButton");
     const dmInbox = document.getElementById("dmInbox");
     const refreshDMInboxButton = document.getElementById("refreshDMInboxButton");
     
-    // Gerenciar Usuários (Pesquisa e Remoção)
+    // Gerenciar Usuários
     const searchUserId = document.getElementById("searchUserId");
     const searchUserButton = document.getElementById("searchUserButton");
     const userSearchResult = document.getElementById("userSearchResult");
@@ -290,7 +289,7 @@
     const getUserInfoButton = document.getElementById("getUserInfoButton");
     const userInfoDisplay = document.getElementById("userInfoDisplay");
     
-    // Função para exibir mensagens em um container (chat ou DM)
+    // Função para exibir mensagens
     function appendChatMessage(container, message) {
       const p = document.createElement("p");
       p.textContent = message;
@@ -393,12 +392,12 @@
         socket.on("userLeft", data => {
           appendChatMessage(chatMessages, "Usuário " + data.userId + " saiu da sala " + data.roomId);
         });
-        // Ao receber nova DM, exibe o senderName se disponível
+        // Ao receber nova DM, exibe o usuário que enviou
         socket.on("newDirectMessage", (msg) => {
           const sender = msg.senderName || msg.senderId;
           appendChatMessage(dmInbox, "DM de " + sender + ": " + msg.conteudo);
         });
-        // Atualiza DM Inbox logo no login
+        // Atualiza mensagens de dm no login
         updateDMInbox();
       } catch (error) {
         console.error("Erro durante o login:", error);
@@ -406,7 +405,7 @@
       }
     });
     
-    // Logout: desconecta o socket e retorna para a tela de login
+    // Logout
     logoutButton.addEventListener("click", () => {
       if (socket) socket.disconnect();
       userId = null;
@@ -418,7 +417,7 @@
       dmInbox.innerHTML = "";
     });
     
-    // Gerenciamento de Salas: Criar nova sala
+    // Criar nova sala
     createRoomButton.addEventListener("click", async () => {
       const roomName = newRoomName.value.trim();
       if (!roomName) { alert("Informe o nome da sala."); return; }
@@ -500,7 +499,7 @@
       }
     }
     
-    // Envio de Mensagens na Sala (Chat)
+    // Envio de mensagens na sala
     sendMessageButton.addEventListener("click", () => {
       const mensagem = messageInput.value.trim();
       if (!mensagem) return;
@@ -560,7 +559,7 @@
       }
     });
     
-    // Remover usuário da sala (usando o usuário pesquisado)
+    // Remover o usuário da sala usando a pesquisa
     removeUserButton.addEventListener("click", async () => {
       const searchId = searchUserId.value.trim();
       if (!searchId) {
@@ -587,7 +586,7 @@
       }
     });
     
-    // Lista os usuários presentes na sala atual
+    // Lista os usuários na sala atual
     listUsersButton.addEventListener("click", listUsers);
     async function listUsers() {
       try {
@@ -610,7 +609,7 @@
       }
     }
     
-    // Consulta informações do próprio usuário
+    // Consulta informações do usuário
     getUserInfoButton.addEventListener("click", async () => {
       if (!userId) return;
       try {
