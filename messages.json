@@ -382,5 +382,41 @@
     "senderId": "2",
     "conteudo": "asdasdasd",
     "timestamp": "2025-04-14T23:48:35.584Z"
+  },
+  {
+    "id": "49",
+    "type": "direct",
+    "senderId": "2",
+    "senderLogin": "joao",
+    "receiverId": "3",
+    "conteudo": "mensagem de teste",
+    "timestamp": "2025-04-15T00:06:08.906Z"
+  },
+  {
+    "id": "50",
+    "type": "direct",
+    "senderId": "3",
+    "senderLogin": "testejoao1",
+    "receiverId": "2",
+    "conteudo": "recebi sua mensagem",
+    "timestamp": "2025-04-15T00:06:39.925Z"
+  },
+  {
+    "id": "51",
+    "type": "direct",
+    "senderId": "2",
+    "senderLogin": "joao",
+    "receiverId": "3",
+    "conteudo": "mandando agora",
+    "timestamp": "2025-04-15T00:08:27.201Z"
+  },
+  {
+    "id": "52",
+    "type": "direct",
+    "senderId": "3",
+    "senderLogin": "testejoao1",
+    "receiverId": "2",
+    "conteudo": "recebi novamente",
+    "timestamp": "2025-04-15T00:08:44.106Z"
   }
 ]

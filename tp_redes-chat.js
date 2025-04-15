@@ -13,13 +13,10 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static('public'));
 
-
-
 // Caminhos dos arquivos json para persistência
 const usersFile = './users.json';
 const roomsFile = './rooms.json';
 const messagesFile = './messages.json';
-
 
 // Função para inicializar um arquivo JSON caso não exista
 function initializeFile(filePath, initialData = []) {
@@ -65,7 +62,6 @@ function writeJSON(filePath, data) {
     console.error(`Erro ao escrever no arquivo ${filePath}:`, error);
   }
 }
-
 
 // Endpoints de Gerenciamento de Usuários
 /*
@@ -216,7 +212,6 @@ app.delete('/rooms/:roomId/users/:userId', (req, res) => {
   res.json(room);
 });
 
-
 // Endpoints de Mensagens (REST)
 /*
   POST /messages/direct/:receiverId
@@ -225,21 +220,40 @@ app.delete('/rooms/:roomId/users/:userId', (req, res) => {
 app.post('/messages/direct/:receiverId', (req, res) => {
   const { receiverId } = req.params;
   const { senderId, mensagem } = req.body;
+
   if (!senderId || !mensagem) {
     return res.status(400).json({ error: 'senderId e mensagem são obrigatórios.' });
   }
-  
+
+  const users = readJSON(usersFile);
+  const sender = users.find(user => user.id === senderId);
+  const receiver = users.find(user => user.id === receiverId);
+
+  if (!sender) {
+    return res.status(404).json({ error: 'Usuário remetente não encontrado.' });
+  }
+
+  if (!receiver) {
+    return res.status(404).json({ error: 'Usuário destinatário não encontrado.' });
+  }
+
   const messages = readJSON(messagesFile);
   const newMessage = {
     id: String(messages.length + 1),
     type: 'direct',
     senderId,
+    senderLogin: sender.login, // Inclui o nome de login do remetente
     receiverId,
     conteudo: mensagem,
     timestamp: new Date().toISOString()
   };
+
   messages.push(newMessage);
   writeJSON(messagesFile, messages);
+
+  // Emite o evento de nova mensagem direta via Socket.IO
+  io.emit("newDirectMessage", newMessage);
+
   res.status(201).json(newMessage);
 });
 
@@ -283,7 +297,6 @@ app.get('/rooms/:roomId/messages', (req, res) => {
   const roomMessages = messages.filter(message => message.roomId === roomId);
   res.json(roomMessages);
 });
-
 
 // Configuração do Socket.IO para Chat em Tempo Real
 // Cria o servidor HTTP, anexando o Express
@@ -346,31 +359,63 @@ io.on("connection", (socket) => {
   // Evento para enviar mensagem direta
   socket.on("sendDirectMessage", (data) => {
     const { receiverId, senderId, mensagem } = data;
+
+    // Validação dos dados recebidos
     if (!receiverId || !senderId || !mensagem) {
       socket.emit("error", { error: "receiverId, senderId e mensagem são obrigatórios." });
       return;
     }
+
+    // Lê os usuários e valida se o remetente e o destinatário existem
+    const users = readJSON(usersFile);
+    const sender = users.find(user => user.id === senderId);
+    const receiver = users.find(user => user.id === receiverId);
+
+    if (!sender) {
+      socket.emit("error", { error: "Usuário remetente não encontrado." });
+      return;
+    }
+
+    if (!receiver) {
+      socket.emit("error", { error: "Usuário destinatário não encontrado." });
+      return;
+    }
+
+    // Cria a nova mensagem
     const messages = readJSON(messagesFile);
     const newMessage = {
       id: String(messages.length + 1),
       type: "direct",
       senderId,
+      senderLogin: sender.login, // Inclui o login do remetente
       receiverId,
       conteudo: mensagem,
       timestamp: new Date().toISOString()
     };
+
+    // Salva a mensagem no arquivo
     messages.push(newMessage);
     writeJSON(messagesFile, messages);
-    // Para mensagem direta, você pode optar por emitir para todos ou implementar uma lógica
-    // que direciona a mensagem apenas ao socket correspondente ao receiverId (se mantiver mapeamento).
-    io.emit("newDirectMessage", newMessage);
+
+    // Envia a mensagem apenas para o destinatário, se ele estiver conectado
+    const receiverSocket = Array.from(io.sockets.sockets.values()).find(
+      socket => socket.userId === receiverId
+    );
+
+    if (receiverSocket) {
+      receiverSocket.emit("newDirectMessage", newMessage);
+    } else {
+      console.log(`Usuário ${receiverId} não está conectado no momento.`);
+    }
+
+    // Opcional: Notifica o remetente que a mensagem foi enviada
+    socket.emit("directMessageSent", newMessage);
   });
 
   socket.on("disconnect", () => {
     console.log("Cliente desconectado: " + socket.id);
   });
 });
-
 
 // Inicialização do Servidor com Socket.IO
 server.listen(PORT, () => {
