@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "nome": "TpRedes-2",
+    "usuarios": [
+      "1",
+      "2"
+    ],
+    "criadoEm": "2025-04-16T23:48:51.504Z"
+  },
+  {
+    "id": "2",
+    "nome": "TpRedes-1",
+    "usuarios": [
+      "1",
+      "2"
+    ],
+    "criadoEm": "2025-04-16T23:49:47.488Z"
+  },
+  {
+    "id": "3",
+    "nome": "TpRedes-3",
+    "usuarios": [],
+    "criadoEm": "2025-04-16T23:50:00.456Z"
+  }
+]

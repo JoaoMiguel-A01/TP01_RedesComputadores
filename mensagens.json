@@ -1,0 +1,56 @@
+[
+  {
+    "id": "1",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "1",
+    "senderLogin": "Paulo",
+    "conteudo": "Boa noite",
+    "timestamp": "2025-04-16T23:44:59.734Z"
+  },
+  {
+    "id": "2",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "2",
+    "senderLogin": "Joao",
+    "conteudo": "Tudo bem?",
+    "timestamp": "2025-04-16T23:45:05.727Z"
+  },
+  {
+    "id": "3",
+    "type": "room",
+    "roomId": "1",
+    "senderId": "2",
+    "senderLogin": "Joao",
+    "conteudo": "Teste",
+    "timestamp": "2025-04-16T23:46:41.999Z"
+  },
+  {
+    "id": "4",
+    "type": "direct",
+    "senderId": "1",
+    "senderLogin": "Paulo",
+    "receiverId": "2",
+    "conteudo": "Olá!",
+    "timestamp": "2025-04-16T23:48:22.081Z"
+  },
+  {
+    "id": "5",
+    "type": "room",
+    "roomId": "2",
+    "senderId": "1",
+    "senderLogin": "Paulo",
+    "conteudo": "Teste redes",
+    "timestamp": "2025-04-16T23:50:48.542Z"
+  },
+  {
+    "id": "6",
+    "type": "room",
+    "roomId": "2",
+    "senderId": "2",
+    "senderLogin": "Joao",
+    "conteudo": "123",
+    "timestamp": "2025-04-16T23:50:57.975Z"
+  }
+]

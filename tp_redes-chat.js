@@ -15,9 +15,9 @@ app.use(cors());
 app.use(express.static('public'));
 
 // Caminhos dos arquivos json
-const usersFile = './users.json';
-const roomsFile = './rooms.json';
-const messagesFile = './messages.json';
+const usersFile = './usuarios.json';
+const roomsFile = './salas.json';
+const messagesFile = './mensagens.json';
 
 // Função para inicializar um arquivo JSON caso não exista
 function initializeFile(filePath, initialData = []) {

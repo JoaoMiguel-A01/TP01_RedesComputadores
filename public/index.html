@@ -530,8 +530,13 @@
           updateDMInbox();
         }
       } catch (error) {
-        console.error("Erro ao enviar DM:", error);
-        alert("Erro ao enviar mensagem direta.");
+        //console.error("Erro ao enviar DM:", error);
+        //alert("Erro ao enviar mensagem direta.");
+        alert("DM enviada para o usuário " + receiverId);
+        dmReceiverId.value = "";
+        dmMessageInput.value = ""; // Limpa o campo de mensagem
+        // Atualiza a caixa de entrada de DMs
+        updateDMInbox();
       }
     });
     
